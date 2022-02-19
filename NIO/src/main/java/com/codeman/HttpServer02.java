@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author hdgaadd
@@ -11,14 +13,15 @@ import java.net.Socket;
  * access : http://localhost:8080
  * 压测工具SuperBenchmarker : sb -u http://localhost:8080/ -c 40 -N 30
  */
-public class HttpServer01 { // RPS: 36.7 (requests/second)，系统每秒能接受36个请求
+public class HttpServer02 { // RPS: 1313.7 (requests/second) ，系统每秒能接受1313个请求
     public static void main(String[] args) throws IOException {
+        ExecutorService exec = Executors.newFixedThreadPool(40);
         final ServerSocket serverSocket = new ServerSocket(8080);
 
         while (true) {
             try {
                 final Socket socket = serverSocket.accept();
-                handle(socket);
+                exec.execute(() -> handle(socket));
             } catch (Exception e) {
                 e.printStackTrace(); // 打印异常信息
             }
